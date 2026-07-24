@@ -1,0 +1,18 @@
+{
+  "tagline": "EBU R128 loudness measurement, normalization, and CI gate",
+  "headline": "Master once. Pass every platform check.",
+  "summary": "Measure integrated loudness, range, and true peak, then run deterministic two-pass FFmpeg normalization.",
+  "accent": "#ff8fa3",
+  "topics": "audio-processing,ebu-r128,ffmpeg,loudness,podcast,music-production",
+  "sources": [
+    [
+      "EBU R128",
+      "https://tech.ebu.ch/loudness/"
+    ],
+    [
+      "FFmpeg loudnorm",
+      "https://www.ffmpeg.org/ffmpeg-filters.html#loudnorm"
+    ]
+  ],
+  "name": "loudnessgate"
+}

@@ -1,0 +1,22 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "loudnessgate"
+version = "0.1.0"
+description = "EBU R128 loudness measurement, normalization, and CI gate"
+readme = "README.md"
+requires-python = ">=3.10"
+license = {text = "MIT"}
+authors = [{name = "Ahmed Doghri"}]
+dependencies = []
+
+[project.scripts]
+loudnessgate = "loudnessgate.cli:main"
+
+[tool.setuptools]
+packages = ["loudnessgate"]
+
+[tool.setuptools.package-data]
+loudnessgate = ["web/*.html"]
