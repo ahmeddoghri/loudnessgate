@@ -36,6 +36,18 @@ def make_handler(web_root: Path):
                 length = int(self.headers.get("Content-Length", "0"))
                 payload = json.loads(self.rfile.read(length) or b"{}")
                 if self.path == "/api/analyze":
+                    # analyze() falls back to measure(payload["path"], ...),
+                    # which runs ffmpeg directly against that filesystem
+                    # path. Accepting "path" from an unauthenticated remote
+                    # HTTP caller would let anyone probe or process
+                    # arbitrary local files on this server. The JSON API is
+                    # only for pre-measured values; local-file measurement
+                    # stays a CLI-only, same-machine operation.
+                    if "path" in payload:
+                        return self._json(
+                            {"error": "the JSON API only accepts pre-measured values; use the CLI to measure a local file"},
+                            HTTPStatus.BAD_REQUEST,
+                        )
                     return self._json(analyze(payload))
                 self._json({"error": "not found"}, HTTPStatus.NOT_FOUND)
             except (ValueError, TypeError, KeyError, json.JSONDecodeError) as error:

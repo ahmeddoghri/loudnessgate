@@ -40,6 +40,32 @@ Open <http://127.0.0.1:8090>. Analyze your own JSON input with `loudnessgate ana
 
 The podcast fixture measures -18.4 LUFS against a -16 target — 2.4 dB quiet — while its loudness range and true peak already sit comfortably inside spec. loudnessgate reports the exact gain needed and, in the integration test, actually applies real two-pass FFmpeg normalization and remeasures the output to confirm it landed.
 
+## Update: fixed an unauthenticated arbitrary-local-file vulnerability
+
+`POST /api/analyze` forwarded the raw JSON body straight into `analyze()`,
+which falls back to `measure(payload["path"], ...)` — running `ffmpeg`
+directly against that filesystem path — whenever `measurement` was
+absent. That let any unauthenticated remote caller make the server run
+ffmpeg against an arbitrary local file just by sending `{"path":
+"/etc/hosts"}`: at minimum a file-existence oracle (the error message
+differs for a missing file vs. a file ffmpeg can't decode vs. a real
+media file), and worse if the target happened to be an actual media file
+the caller had no business measuring.
+
+Verified directly: posting `{"profile": "podcast", "path": "/etc/hosts"}`
+made the live server invoke ffmpeg against `/etc/hosts` and return its
+stderr output — including the exact path — straight back to the caller.
+
+Fixed by rejecting any request that includes a `path` field before it
+reaches `analyze()` — the network API now only accepts pre-measured
+values; local-file measurement stays a CLI-only, same-machine operation
+(`loudnessgate analyze`/`normalize`, where the caller already has local
+filesystem access regardless). `tests/test_server_path_exposure.py`
+covers the rejection, confirms it happens before any filesystem check
+(so the response can't be used as an existence oracle either), and
+confirms legitimate pre-measured requests still work. `core.py` and the
+CLI are unchanged; the published demo output reproduces exactly.
+
 ## Scope
 
 Broadcast, podcast, and streaming presets here are reasonable engineering defaults, not a guarantee that matches every distributor's current contract. Check the actual target, channel layout, codec, and true-peak requirement for wherever the file is actually going.
