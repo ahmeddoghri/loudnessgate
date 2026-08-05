@@ -17,7 +17,7 @@ Run FFmpeg's `loudnorm` filter in measurement mode to get the file's real integr
 - Three-metric measurement (integrated loudness, loudness range, true peak) against named delivery profiles (podcast, broadcast, streaming)
 - Real two-pass FFmpeg loudnorm normalization, not a single-pass approximation
 - Per-metric pass/fail reporting, so you know exactly what's wrong before you fix anything
-- CLI, JSON API, browser workbench, Docker, tests, and CI
+- CLI, JSON API, browser workbench, Docker, tests
 
 ## Run it end to end
 
