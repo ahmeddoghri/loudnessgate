@@ -1,5 +1,7 @@
 # loudnessgate
 
+[![tests](https://github.com/ahmeddoghri/loudnessgate/actions/workflows/tests.yml/badge.svg)](https://github.com/ahmeddoghri/loudnessgate/actions/workflows/tests.yml) [![case study](https://img.shields.io/badge/case%20study-adoghri.com-e0703e)](https://adoghri.com/project-53.html)
+
 **"Sounds about right" is not a loudness spec, and the platform that rejects your upload doesn't care that it sounded fine in your headphones.**
 
 ![loudnessgate cover](demo/cover.png)
