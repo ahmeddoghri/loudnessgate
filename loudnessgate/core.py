@@ -38,7 +38,22 @@ def analyze(payload: dict[str, Any]) -> dict[str, Any]:
     target = PROFILES[profile_name]
     measurement = payload.get("measurement")
     if measurement is None:
-        measurement = measure(str(payload.get("path", "")), target)
+        # Accept the report's own vocabulary as well as ffmpeg's raw keys, so
+        # a caller can feed back the numbers this tool just printed at them.
+        friendly = {
+            "input_i": payload.get("integrated_lufs"),
+            "input_tp": payload.get("true_peak_dbtp"),
+            "input_lra": payload.get("loudness_range_lu"),
+        }
+        if all(value is not None for value in friendly.values()):
+            measurement = friendly
+        elif payload.get("path"):
+            measurement = measure(str(payload["path"]), target)
+        else:
+            raise ValueError(
+                "provide measured loudness: either measurement{input_i,input_tp,input_lra} "
+                "or integrated_lufs, true_peak_dbtp and loudness_range_lu"
+            )
     integrated = float(measurement["input_i"])
     peak = float(measurement["input_tp"])
     lra = float(measurement["input_lra"])

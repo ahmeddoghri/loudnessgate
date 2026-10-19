@@ -36,7 +36,18 @@ Open <http://127.0.0.1:8090>. Analyze your own JSON input with `loudnessgate ana
 ## API
 
 - `GET /api/demo` returns the committed fixture and result.
-- `POST /api/analyze` runs the same engine on a JSON body.
+- `POST /api/analyze` grades **pre-measured** loudness values. It takes the
+  numbers this tool prints:
+
+  ```bash
+  curl -X POST localhost:8090/api/analyze -d '{"profile": "podcast",
+    "integrated_lufs": -18.4, "true_peak_dbtp": -2.1, "loudness_range_lu": 6.2}'
+  ```
+
+  ffmpeg's own keys work too (`measurement: {input_i, input_tp, input_lra}`).
+  A body with neither is rejected with a message naming the fields, rather
+  than falling through to measuring an empty path. A body carrying `path` is
+  rejected outright: measuring a local file is a CLI-only operation.
 
 ## The result
 
